@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CEMS – College Event Management System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0d0d0d;
+      --cream: #f7f3ee;
+      --gold: #c8922a;
+      --gold-light: #f0c96a;
+      --rust: #b84b2f;
+      --deep: #1a1a2e;
+      --mid: #2c2c54;
+      --soft: #e8e2d9;
+      --muted: #7a7068;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); overflow-x: hidden; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; height: 64px;
+      background: rgba(13,13,13,0.94);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(200,146,42,0.2);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem; font-weight: 900;
+      color: var(--gold-light); letter-spacing: 0.04em; cursor: pointer;
+    }
+    .nav-logo span { color: #fff; }
+    .nav-links { display: flex; align-items: center; gap: 0.2rem; list-style: none; }
+    .nav-links li a, .nav-links li button {
+      display: block; padding: 0.45rem 0.9rem;
+      color: #bbb; text-decoration: none;
+      font-size: 0.82rem; font-weight: 500;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      background: none; border: none; cursor: pointer;
+      border-radius: 0.3rem;
+      transition: color 0.2s, background 0.2s;
+    }
+    .nav-links li a:hover, .nav-links li button:hover { color: #fff; background: rgba(255,255,255,0.07); }
+    .nav-links li a.active { color: var(--gold-light); }
+    .nav-cta { display: flex; gap: 0.6rem; margin-left: 1rem; }
+    .btn-nav-login {
+      padding: 0.42rem 1.1rem;
+      border: 1px solid rgba(200,146,42,0.5); color: var(--gold-light);
+      background: none; border-radius: 0.3rem; cursor: pointer;
+      font-size: 0.82rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase;
+      transition: background 0.2s, color 0.2s;
+    }
+    .btn-nav-login:hover { background: rgba(200,146,42,0.15); }
+    .btn-nav-register {
+      padding: 0.42rem 1.1rem; background: var(--gold); color: var(--ink);
+      border: none; border-radius: 0.3rem; cursor: pointer;
+      font-size: 0.82rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+      transition: background 0.2s;
+    }
+    .btn-nav-register:hover { background: var(--gold-light); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: #ccc; border-radius: 2px; }
+
+    /* PAGES */
+    .page { display: none; padding-top: 64px; background: var(--cream); }
+    .page.active { display: block; }
+
+    /* HOME HERO */
+    .hero {
+      min-height: 88vh;
+      background: var(--deep);
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 5rem 5% 4rem;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 55%, rgba(200,146,42,0.13) 0%, transparent 70%);
+    }
+    .hero-badge {
+      display: inline-block; border: 1px solid var(--gold); color: var(--gold);
+      font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 0.35rem 1.1rem; border-radius: 2rem; margin-bottom: 1.8rem;
+      animation: fadeUp 0.7s ease both;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 7vw, 5.5rem); font-weight: 900; line-height: 1.07; color: #fff;
+      animation: fadeUp 0.7s 0.15s ease both;
+    }
+    .hero h1 span { color: var(--gold-light); }
+    .hero-sub {
+      max-width: 580px; margin: 1.8rem auto 0;
+      color: #aaa; font-size: 1rem; line-height: 1.75;
+      animation: fadeUp 0.7s 0.3s ease both;
+    }
+    .hero-cta {
+      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+      margin-top: 2.8rem; animation: fadeUp 0.7s 0.45s ease both;
+    }
+    .btn-primary {
+      padding: 0.85rem 2.2rem; background: var(--gold); color: var(--ink);
+      font-weight: 600; font-size: 0.9rem; border: none; border-radius: 0.35rem;
+      cursor: pointer; transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+    .btn-outline {
+      padding: 0.85rem 2.2rem; background: transparent; color: #ddd;
+      border: 1px solid rgba(255,255,255,0.3); border-radius: 0.35rem;
+      cursor: pointer; font-size: 0.9rem;
+      transition: border-color 0.2s, color 0.2s, transform 0.15s;
+    }
+    .btn-outline:hover { border-color: var(--gold-light); color: var(--gold-light); transform: translateY(-2px); }
+
+    /* STATS BAR */
+    .stats-bar {
+      background: rgba(26,26,46,0.97); border-top: 1px solid rgba(255,255,255,0.05);
+      display: flex; justify-content: center; flex-wrap: wrap;
+    }
+    .stat-item { padding: 1.8rem 3rem; text-align: center; border-right: 1px solid rgba(255,255,255,0.07); }
+    .stat-item:last-child { border-right: none; }
+    .stat-num { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; color: var(--gold-light); }
+    .stat-label { font-size: 0.78rem; color: #888; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 0.2rem; }
+
+    /* SECTION SHARED */
+    .home-section { padding: 4rem 5%; background: var(--cream); }
+    .home-section.alt { background: var(--soft); padding: 4rem 5%; }
+    .home-section.dark { background: var(--deep); padding: 4rem 5%; }
+    .section-label { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); font-weight: 600; margin-bottom: 0.6rem; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.7rem, 3.5vw, 2.6rem); font-weight: 700; line-height: 1.15; }
+    .section-desc { color: var(--muted); font-size: 0.97rem; line-height: 1.75; max-width: 640px; margin-top: 0.8rem; }
+    .dark .section-title { color: #fff; }
+    .dark .section-desc { color: #999; }
+
+    /* AIM CARDS */
+    .aim-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.6rem; margin-top: 3rem; }
+    .aim-card {
+      background: #fff; border: 1px solid var(--soft); border-radius: 1rem; padding: 2rem;
+      position: relative; overflow: hidden; transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .aim-card:hover { transform: translateY(-5px); box-shadow: 0 18px 36px rgba(0,0,0,0.07); }
+    .aim-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+    .aim-icon { font-size: 2rem; margin-bottom: 1rem; }
+    .aim-card h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .aim-card p { color: var(--muted); font-size: 0.88rem; line-height: 1.65; }
+
+    /* FEATURE CARDS */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.4rem; margin-top: 3rem; }
+    .feat-card {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(200,146,42,0.18); border-radius: 1rem; padding: 1.8rem 1.5rem;
+      transition: background 0.25s, border-color 0.25s, transform 0.25s;
+    }
+    .feat-card:hover { background: rgba(200,146,42,0.1); border-color: rgba(200,146,42,0.45); transform: translateY(-5px); }
+    .feat-num { font-size: 0.7rem; color: var(--gold); letter-spacing: 0.12em; font-weight: 700; margin-bottom: 0.9rem; }
+    .feat-card h3 { font-size: 0.98rem; color: #fff; margin-bottom: 0.5rem; }
+    .feat-card p { color: #888; font-size: 0.84rem; line-height: 1.6; }
+
+    /* EVENT PREVIEW CARDS */
+    .events-preview { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+    .ev-card {
+      background: #fff; border-radius: 1rem; overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06); transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .ev-card:hover { transform: translateY(-5px); box-shadow: 0 12px 32px rgba(0,0,0,0.1); }
+    .ev-banner { height: 100px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
+    .ev-banner.tech { background: linear-gradient(135deg, #1a1a2e, #2c2c54); }
+    .ev-banner.culture { background: linear-gradient(135deg, #4a1942, #7b2d6e); }
+    .ev-banner.sports { background: linear-gradient(135deg, #1a3a2e, #2d6e52); }
+    .ev-body { padding: 1.2rem; }
+    .ev-tag { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+    .ev-body h3 { font-family: 'Playfair Display', serif; font-size: 1rem; margin: 0.35rem 0 0.5rem; }
+    .ev-meta { display: flex; gap: 1rem; font-size: 0.78rem; color: var(--muted); flex-wrap: wrap; }
+    .ev-actions { display: flex; gap: 0.6rem; margin-top: 1rem; }
+    .btn-sm {
+      padding: 0.4rem 1rem; border-radius: 0.3rem; font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; border: none; transition: background 0.2s, transform 0.15s;
+    }
+    .btn-sm:hover { transform: translateY(-1px); }
+    .btn-sm.gold { background: var(--gold); color: var(--ink); }
+    .btn-sm.gold:hover { background: var(--gold-light); }
+    .btn-sm.ghost { background: var(--soft); color: var(--ink); }
+    .btn-sm.ghost:hover { background: #ddd; }
+
+    /* PAGE HERO (inner pages) */
+    .page-hero { background: var(--deep); padding: 3.5rem 5% 3rem; text-align: center; margin-bottom: 0; }
+    .page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; color: #fff; margin-top: 0.5rem; }
+    .page-hero p { color: #999; font-size: 0.97rem; max-width: 520px; margin: 0.8rem auto 0; line-height: 1.7; }
+
+    /* EVENTS PAGE */
+    .events-page-body { padding: 3rem 5%; background: var(--cream); }
+    .events-filter { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+    .filter-btn {
+      padding: 0.45rem 1.1rem; border-radius: 2rem; border: 1px solid var(--soft);
+      background: #fff; color: var(--muted); font-size: 0.82rem; cursor: pointer; font-weight: 500;
+      transition: all 0.2s;
+    }
+    .filter-btn.active, .filter-btn:hover { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+    .events-full-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1.8rem; }
+    .event-full-card {
+      background: #fff; border-radius: 1rem; overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06); transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .event-full-card:hover { transform: translateY(-5px); box-shadow: 0 14px 36px rgba(0,0,0,0.1); }
+    .efc-banner { height: 120px; display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+    .efc-body { padding: 1.4rem; }
+    .efc-tag { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+    .efc-body h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; margin: 0.4rem 0 0.5rem; }
+    .efc-meta { font-size: 0.8rem; color: var(--muted); line-height: 1.7; }
+    .seats-bar { height: 5px; background: var(--soft); border-radius: 3px; margin-top: 0.8rem; overflow: hidden; }
+    .seats-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 3px; }
+    .seats-text { font-size: 0.72rem; color: var(--muted); display: flex; justify-content: space-between; margin-top: 0.3rem; }
+    .efc-actions { display: flex; gap: 0.6rem; margin-top: 1.1rem; }
+
+    /* AUTH PAGES */
+    .auth-page {
+      padding: 4rem 5%;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--deep) 0%, #16213e 100%);
+    }
+    .auth-box {
+      background: rgba(255,255,255,0.04); backdrop-filter: blur(10px);
+      border: 1px solid rgba(200,146,42,0.2); border-radius: 1.2rem;
+      padding: 3rem 2.8rem; width: 100%; max-width: 460px;
+    }
+    .auth-box h2 { font-family: 'Playfair Display', serif; font-size: 1.9rem; color: #fff; margin-bottom: 0.4rem; }
+    .auth-box .sub { color: #888; font-size: 0.88rem; margin-bottom: 2rem; }
+    .auth-box .sub a { color: var(--gold-light); text-decoration: none; cursor: pointer; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label { display: block; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: #aaa; font-weight: 600; margin-bottom: 0.5rem; }
+    .form-group input, .form-group select {
+      width: 100%; padding: 0.75rem 1rem;
+      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 0.5rem; color: #fff; font-size: 0.92rem; font-family: 'DM Sans', sans-serif;
+      transition: border-color 0.2s, background 0.2s; outline: none;
+    }
+    .form-group input::placeholder { color: #555; }
+    .form-group input:focus, .form-group select:focus { border-color: var(--gold); background: rgba(200,146,42,0.07); }
+    .form-group select option { background: #1a1a2e; }
+    .form-check { display: flex; align-items: flex-start; gap: 0.7rem; margin-bottom: 1.5rem; }
+    .form-check input { width: auto; margin-top: 3px; accent-color: var(--gold); }
+    .form-check label { font-size: 0.82rem; color: #888; line-height: 1.5; text-transform: none; letter-spacing: 0; }
+    .form-check label a { color: var(--gold-light); text-decoration: none; }
+    .btn-auth {
+      width: 100%; padding: 0.9rem; background: var(--gold); color: var(--ink);
+      border: none; border-radius: 0.5rem; font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; letter-spacing: 0.04em; transition: background 0.2s, transform 0.15s;
+    }
+    .btn-auth:hover { background: var(--gold-light); transform: translateY(-1px); }
+    .auth-divider { text-align: center; color: #555; font-size: 0.82rem; margin: 1.4rem 0; position: relative; }
+    .auth-divider::before, .auth-divider::after { content: ''; position: absolute; top: 50%; width: 38%; height: 1px; background: rgba(255,255,255,0.08); }
+    .auth-divider::before { left: 0; }
+    .auth-divider::after { right: 0; }
+    .social-btn {
+      width: 100%; padding: 0.75rem; background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem;
+      color: #ddd; font-size: 0.88rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+      transition: background 0.2s;
+    }
+    .social-btn:hover { background: rgba(255,255,255,0.1); }
+
+    /* ABOUT PAGE */
+    .about-intro { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; padding: 4rem 5%; background: var(--cream); }
+    @media (max-width: 700px) { .about-intro { grid-template-columns: 1fr; gap: 2rem; } }
+    @media (max-width: 650px) { .vm-grid { grid-template-columns: 1fr !important; } }
+    .about-text p { color: var(--muted); font-size: 0.95rem; line-height: 1.8; margin-bottom: 1rem; }
+    .about-visual { background: var(--deep); border-radius: 1.5rem; padding: 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .about-stat-card { background: rgba(200,146,42,0.1); border: 1px solid rgba(200,146,42,0.2); border-radius: 0.8rem; padding: 1.2rem; text-align: center; }
+    .about-stat-card .big { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; color: var(--gold-light); }
+    .about-stat-card .lbl { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.25rem; }
+    .team-section { background: var(--soft); padding: 4rem 5%; }
+    .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+    .team-card { background: #fff; border-radius: 1rem; padding: 1.8rem 1.2rem; text-align: center; transition: transform 0.25s, box-shadow 0.25s; }
+    .team-card:hover { transform: translateY(-5px); box-shadow: 0 14px 32px rgba(0,0,0,0.08); }
+    .team-avatar { width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, var(--deep), var(--mid)); margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; }
+    .team-card h4 { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.25rem; }
+    .team-card span { font-size: 0.78rem; color: var(--gold); font-weight: 500; }
+    .tech-section-about { padding: 4rem 5%; background: var(--cream); }
+    .tech-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; margin-top: 3rem; }
+    @media (max-width: 700px) { .tech-cols { grid-template-columns: 1fr; gap: 2rem; } }
+    .tech-block h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 1.4rem; padding-bottom: 0.6rem; border-bottom: 2px solid var(--gold); }
+    .tech-item { display: flex; align-items: center; gap: 1rem; padding: 0.9rem 0; border-bottom: 1px solid var(--soft); }
+    .tech-item:last-child { border-bottom: none; }
+    .tech-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+    .tech-item strong { display: block; font-weight: 600; font-size: 0.93rem; }
+    .tech-item span { color: var(--muted); font-size: 0.83rem; }
+
+    /* CONTACT PAGE */
+    .contact-body { display: grid; grid-template-columns: 1fr 1.4fr; gap: 4rem; padding: 4rem 5%; background: var(--cream); }
+    @media (max-width: 750px) { .contact-body { grid-template-columns: 1fr; } }
+    .contact-info h2 { font-family: 'Playfair Display', serif; font-size: 1.9rem; margin-bottom: 1rem; }
+    .contact-info p { color: var(--muted); font-size: 0.93rem; line-height: 1.75; margin-bottom: 2rem; }
+    .contact-item { display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.4rem; }
+    .c-icon { width: 42px; height: 42px; border-radius: 0.6rem; background: rgba(200,146,42,0.12); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .c-text strong { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.15rem; }
+    .c-text span { color: var(--muted); font-size: 0.84rem; }
+    .contact-form { background: #fff; border-radius: 1.2rem; padding: 2.5rem; box-shadow: 0 8px 32px rgba(0,0,0,0.07); }
+    .contact-form h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 1.5rem; }
+    .cf-group { margin-bottom: 1.1rem; }
+    .cf-group label { display: block; font-size: 0.78rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 0.45rem; }
+    .cf-group input, .cf-group textarea, .cf-group select {
+      width: 100%; padding: 0.72rem 1rem;
+      background: var(--cream); border: 1px solid var(--soft);
+      border-radius: 0.5rem; color: var(--ink); font-size: 0.9rem; font-family: 'DM Sans', sans-serif;
+      outline: none; transition: border-color 0.2s;
+    }
+    .cf-group input:focus, .cf-group textarea:focus, .cf-group select:focus { border-color: var(--gold); }
+    .cf-group textarea { resize: vertical; min-height: 110px; }
+    .btn-contact { width: 100%; padding: 0.85rem; background: var(--gold); color: var(--ink); border: none; border-radius: 0.5rem; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.15s; }
+    .btn-contact:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+    /* DASHBOARD */
+    .dashboard-body { padding: 2.5rem 5%; background: var(--soft); }
+    .dash-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+    .dash-header h2 { font-family: 'Playfair Display', serif; font-size: 1.6rem; }
+    .dash-header .sub { color: var(--muted); font-size: 0.88rem; }
+    .dash-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 1.2rem; margin-bottom: 2.5rem; }
+    .ds-card { background: #fff; border-radius: 0.9rem; padding: 1.5rem; border-left: 4px solid var(--gold); }
+    .ds-card .ds-num { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; }
+    .ds-card .ds-label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-top: 0.2rem; }
+    .dash-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
+    @media (max-width: 750px) { .dash-grid { grid-template-columns: 1fr; } }
+    .dash-card { background: #fff; border-radius: 0.9rem; padding: 1.6rem; }
+    .dash-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 1.2rem; padding-bottom: 0.7rem; border-bottom: 1px solid var(--soft); }
+    .reg-item { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--soft); }
+    .reg-item:last-child { border-bottom: none; }
+    .ri-title { font-size: 0.88rem; font-weight: 500; }
+    .ri-date { font-size: 0.76rem; color: var(--muted); }
+    .badge { padding: 0.22rem 0.7rem; border-radius: 2rem; font-size: 0.7rem; font-weight: 600; }
+    .badge.confirmed { background: rgba(46,204,113,0.15); color: #27ae60; }
+    .badge.pending { background: rgba(200,146,42,0.15); color: var(--gold); }
+    .notif-item { display: flex; gap: 0.8rem; align-items: flex-start; padding: 0.8rem 0; border-bottom: 1px solid var(--soft); }
+    .notif-item:last-child { border-bottom: none; }
+    .notif-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); flex-shrink: 0; margin-top: 5px; }
+    .notif-text { font-size: 0.83rem; color: var(--muted); line-height: 1.5; }
+    .notif-text strong { color: var(--ink); }
+
+    /* FOOTER */
+    .site-footer { background: var(--ink); color: #666; padding: 3rem 5% 1.5rem; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 2.5rem; }
+    @media (max-width: 750px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; } }
+    .footer-brand .logo { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 900; color: var(--gold-light); margin-bottom: 0.8rem; }
+    .footer-brand p { font-size: 0.84rem; line-height: 1.7; max-width: 240px; }
+    .footer-col h4 { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: #aaa; font-weight: 600; margin-bottom: 1rem; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 0.55rem; }
+    .footer-col ul li a { color: #666; text-decoration: none; font-size: 0.85rem; cursor: pointer; transition: color 0.2s; }
+    .footer-col ul li a:hover { color: var(--gold-light); }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1.2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; font-size: 0.78rem; }
+    .footer-bottom .hl { color: var(--gold-light); }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 999;
+      background: var(--deep); color: #fff; border: 1px solid rgba(200,146,42,0.4);
+      padding: 1rem 1.5rem; border-radius: 0.7rem; font-size: 0.9rem;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.3);
+      transform: translateY(100px); opacity: 0; transition: transform 0.35s, opacity 0.35s;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* MOBILE */
+    @media (max-width: 820px) {
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      .mobile-menu {
+        display: none; position: fixed; top: 64px; left: 0; right: 0; z-index: 190;
+        background: rgba(13,13,13,0.97); backdrop-filter: blur(12px);
+        padding: 1.5rem 5%; border-bottom: 1px solid rgba(200,146,42,0.2);
+        flex-direction: column; gap: 0.4rem;
+      }
+      .mobile-menu.open { display: flex; }
+      .mobile-menu a, .mobile-menu button {
+        display: block; padding: 0.8rem 1rem; color: #bbb; text-decoration: none;
+        font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em;
+        background: none; border: none; cursor: pointer; text-align: left;
+        border-radius: 0.35rem; width: 100%; transition: background 0.2s, color 0.2s;
+      }
+      .mobile-menu a:hover, .mobile-menu button:hover { background: rgba(255,255,255,0.06); color: #fff; }
+      .mob-cta { display: flex; gap: 0.6rem; margin-top: 0.8rem; }
+      .mob-cta button { flex: 1; text-align: center; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .reveal { opacity: 1; transform: translateY(0); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.animate { opacity: 0; transform: translateY(28px); }
+    .reveal.animate.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">CEMS<span>.</span></div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#" onclick="showPage('home')" id="nav-home" class="active">Home</a></li>
+    <li><a href="#" onclick="showPage('events')" id="nav-events">Events</a></li>
+    <li><a href="#" onclick="showPage('about')" id="nav-about">About Us</a></li>
+    <li><a href="#" onclick="showPage('contact')" id="nav-contact">Contact</a></li>
+    <li><a href="#" onclick="showPage('dashboard')" id="nav-dashboard">Dashboard</a></li>
+  </ul>
+  <div class="nav-cta">
+    <button class="btn-nav-login" onclick="showPage('login')">Login</button>
+    <button class="btn-nav-register" onclick="showPage('register')">Register</button>
+  </div>
+  <div class="hamburger" id="hamburger" onclick="toggleMobile()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#" onclick="showPage('home');toggleMobile()">Home</a>
+  <a href="#" onclick="showPage('events');toggleMobile()">Events</a>
+  <a href="#" onclick="showPage('about');toggleMobile()">About Us</a>
+  <a href="#" onclick="showPage('contact');toggleMobile()">Contact</a>
+  <a href="#" onclick="showPage('dashboard');toggleMobile()">Dashboard</a>
+  <div class="mob-cta">
+    <button class="btn-nav-login" onclick="showPage('login');toggleMobile()">Login</button>
+    <button class="btn-nav-register" onclick="showPage('register');toggleMobile()">Register</button>
+  </div>
+</div>
+
+<!-- ══════════ HOME ══════════ -->
+<div id="page-home" class="page active">
+  <section class="hero">
+    <div style="position:relative;z-index:1;">
+      <div class="hero-badge">Abhinav College of Science &amp; Technology · 2024–2026</div>
+      <h1>College <span>Event</span><br>Management<br>System</h1>
+      <p class="hero-sub">A comprehensive event management platform for <strong style="color:var(--gold-light);">Abhinav College of Science and Technology</strong> — streamlining event planning, registration, and participation across campus.</p>
+      <div class="hero-cta">
+        <button class="btn-primary" onclick="showPage('events')">Browse Events</button>
+        <button class="btn-outline" onclick="showPage('register')">Get Started Free</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-num">120+</div><div class="stat-label">Events Hosted</div></div>
+    <div class="stat-item"><div class="stat-num">3.5K</div><div class="stat-label">Registered Students</div></div>
+    <div class="stat-item"><div class="stat-num">40+</div><div class="stat-label">Departments</div></div>
+    <div class="stat-item"><div class="stat-num">98%</div><div class="stat-label">Satisfaction Rate</div></div>
+  </div>
+
+  <section class="home-section">
+    <div class="reveal">
+      <div class="section-label">Project Vision</div>
+      <h2 class="section-title">What We Aim to Achieve</h2>
+      <p class="section-desc">Designed to solve real campus challenges by bringing event management into one unified, intelligent platform.</p>
+    </div>
+    <div class="aim-grid">
+      <div class="aim-card reveal"><div class="aim-icon">⚡</div><h3>Efficient Event Management</h3><p>Streamlined system tailored for college environments, reducing overhead and confusion across departments.</p></div>
+      <div class="aim-card reveal"><div class="aim-icon">🤖</div><h3>Automation of Tasks</h3><p>Automate registrations, notifications, and communications between organisers and attendees seamlessly.</p></div>
+      <div class="aim-card reveal"><div class="aim-icon">🎨</div><h3>User-Friendly Interface</h3><p>An intuitive interface promoting inclusivity so every student can engage with campus events effortlessly.</p></div>
+    </div>
+  </section>
+
+  <section class="home-section alt">
+    <div class="reveal" style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <div class="section-label">What's On Campus</div>
+        <h2 class="section-title">Upcoming Events</h2>
+      </div>
+      <button class="btn-sm gold" onclick="showPage('events')">View All →</button>
+    </div>
+    <div class="events-preview">
+      <div class="ev-card reveal">
+        <div class="ev-banner tech">💻</div>
+        <div class="ev-body">
+          <div class="ev-tag">Technology</div>
+          <h3>TechVision Summit 2026</h3>
+          <div class="ev-meta"><span>📅 Apr 12, 2026</span><span>📍 Main Auditorium</span></div>
+          <div class="ev-actions">
+            <button class="btn-sm gold" onclick="showToast('Registered for TechVision Summit 2026! ✅')">Register</button>
+            <button class="btn-sm ghost" onclick="showPage('events')">Details</button>
+          </div>
+        </div>
+      </div>
+      <div class="ev-card reveal">
+        <div class="ev-banner culture">🎭</div>
+        <div class="ev-body">
+          <div class="ev-tag">Cultural</div>
+          <h3>Spring Culturanza 2026</h3>
+          <div class="ev-meta"><span>📅 Apr 26, 2026</span><span>📍 Open Grounds</span></div>
+          <div class="ev-actions">
+            <button class="btn-sm gold" onclick="showToast('Registered for Spring Culturanza 2026! ✅')">Register</button>
+            <button class="btn-sm ghost" onclick="showPage('events')">Details</button>
+          </div>
+        </div>
+      </div>
+      <div class="ev-card reveal">
+        <div class="ev-banner sports">🏆</div>
+        <div class="ev-body">
+          <div class="ev-tag">Sports</div>
+          <h3>Inter-Dept Sports League 2026</h3>
+          <div class="ev-meta"><span>📅 May 10, 2026</span><span>📍 Sports Complex</span></div>
+          <div class="ev-actions">
+            <button class="btn-sm gold" onclick="showToast('Registered for Sports League 2026! ✅')">Register</button>
+            <button class="btn-sm ghost" onclick="showPage('events')">Details</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section dark">
+    <div class="reveal" style="text-align:center;">
+      <div class="section-label">Platform Features</div>
+      <h2 class="section-title">Everything You Need</h2>
+      <p class="section-desc" style="margin:0.8rem auto 0;">Purpose-built features for both students and event organisers, ensuring seamless interaction from start to finish.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card reveal"><div class="feat-num">01 ——</div><h3>Event Calendar</h3><p>All upcoming events with smart filtering by category, date, and department.</p></div>
+      <div class="feat-card reveal"><div class="feat-num">02 ——</div><h3>Registration & Ticketing</h3><p>Secure participant registration and ticket management with real-time tracking.</p></div>
+      <div class="feat-card reveal"><div class="feat-num">03 ——</div><h3>Notifications & Reminders</h3><p>Automated alerts keep users informed about changes and upcoming deadlines.</p></div>
+      <div class="feat-card reveal"><div class="feat-num">04 ——</div><h3>Feedback & Analytics</h3><p>Post-event surveys and dashboards for deep performance insights.</p></div>
+      <div class="feat-card reveal"><div class="feat-num">05 ——</div><h3>User Dashboard</h3><p>Personalised dashboard to track registrations, history, and notifications.</p></div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-brand"><div class="logo">CEMS.</div><p>A comprehensive College Event Management System streamlining campus life for students and organisers alike.</p></div>
+      <div class="footer-col"><h4>Navigate</h4><ul>
+        <li><a onclick="showPage('home')">Home</a></li>
+        <li><a onclick="showPage('events')">Events</a></li>
+        <li><a onclick="showPage('about')">About Us</a></li>
+        <li><a onclick="showPage('contact')">Contact</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Account</h4><ul>
+        <li><a onclick="showPage('register')">Register</a></li>
+        <li><a onclick="showPage('login')">Login</a></li>
+        <li><a onclick="showPage('dashboard')">Dashboard</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Contact</h4><ul>
+        <li><a><span class="__cf_email__" data-cfemail="f794929a84b794989b9b929092d9929382">[email&#160;protected]</span></a></li>
+        <li><a>+91 98765 43210</a></li>
+        <li><a onclick="showPage('contact')">Send a Message</a></li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2024–2026 <span class="hl">CEMS</span> — Abhinav College of Science and Technology</span>
+      <span>Built with React · Node.js · MongoDB</span>
+    </div>
+  </footer>
+</div>
+
+<!-- ══════════ EVENTS ══════════ -->
+<div id="page-events" class="page">
+  <div class="page-hero">
+    <div class="section-label">Abhinav College of Science and Technology</div>
+    <h1>All Events</h1>
+    <p>Discover, register, and participate in events happening across Abhinav College of Science and Technology.</p>
+  </div>
+  <div class="events-page-body">
+    <div class="events-filter">
+      <button class="filter-btn active" onclick="filterEvents('All', this)">All</button>
+      <button class="filter-btn" onclick="filterEvents('Technology', this)">Technology</button>
+      <button class="filter-btn" onclick="filterEvents('Cultural', this)">Cultural</button>
+      <button class="filter-btn" onclick="filterEvents('Sports', this)">Sports</button>
+      <button class="filter-btn" onclick="filterEvents('Music', this)">Music</button>
+      <button class="filter-btn" onclick="filterEvents('Workshop', this)">Workshop</button>
+      <button class="filter-btn" onclick="filterEvents('Academic', this)">Academic</button>
+    </div>
+    <div id="no-events-msg" style="display:none;text-align:center;padding:3rem;color:var(--muted);font-size:1rem;">
+      No events found for this category.
+    </div>
+    <div class="events-full-grid" id="eventsGrid">
+
+      <div class="event-full-card" data-category="Technology">
+        <div class="efc-banner tech">💻</div>
+        <div class="efc-body">
+          <div class="efc-tag">Technology · 2024</div>
+          <h3>TechFest 2024</h3>
+          <div class="efc-meta">📅 Mar 10, 2024 · 10:00 AM – 6:00 PM<br>📍 Main Auditorium, ACST · Free Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:100%"></div></div>
+          <div class="seats-text"><span>100 attended</span><span>100 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('TechFest 2024 was a grand success! 🎉')">View Recap</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Cultural">
+        <div class="efc-banner culture">🎭</div>
+        <div class="efc-body">
+          <div class="efc-tag">Cultural · 2024</div>
+          <h3>Cultural Night 2024</h3>
+          <div class="efc-meta">📅 Apr 20, 2024 · 5:00 PM – 10:00 PM<br>📍 Open Grounds, ACST · ₹50 Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:100%"></div></div>
+          <div class="seats-text"><span>500 attended</span><span>500 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('Cultural Night 2024 was amazing! 🎭')">View Recap</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Sports">
+        <div class="efc-banner sports">⚽</div>
+        <div class="efc-body">
+          <div class="efc-tag">Sports · 2024</div>
+          <h3>Inter-College Sports Meet 2024</h3>
+          <div class="efc-meta">📅 Jun 5, 2024 · 8:00 AM – 5:00 PM<br>📍 Sports Complex, ACST · Free Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:100%"></div></div>
+          <div class="seats-text"><span>200 attended</span><span>200 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('Sports Meet 2024 completed! 🏆')">View Recap</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Cultural">
+        <div class="efc-banner" style="background:linear-gradient(135deg,#2e2e1a,#6e6e2d);">🎨</div>
+        <div class="efc-body">
+          <div class="efc-tag">Cultural · 2024</div>
+          <h3>Art &amp; Photography Exhibition 2024</h3>
+          <div class="efc-meta">📅 Jul 8, 2024 · 10:00 AM – 4:00 PM<br>📍 Art Gallery Block, ACST · Free Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:100%"></div></div>
+          <div class="seats-text"><span>80 attended</span><span>80 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('Art Expo 2024 — great memories! 🎨')">View Recap</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Music">
+        <div class="efc-banner" style="background:linear-gradient(135deg,#3a1a1a,#6e2d2d);">🎵</div>
+        <div class="efc-body">
+          <div class="efc-tag">Music · 2024</div>
+          <h3>Annual Music Fest 2024</h3>
+          <div class="efc-meta">📅 Aug 12, 2024 · 4:00 PM – 9:00 PM<br>📍 Amphitheatre, ACST · ₹100 Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:100%"></div></div>
+          <div class="seats-text"><span>200 attended</span><span>200 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('Music Fest 2024 rocked! 🎵')">View Recap</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Workshop">
+        <div class="efc-banner" style="background:linear-gradient(135deg,#1a2e2e,#2d6e6e);">🔬</div>
+        <div class="efc-body">
+          <div class="efc-tag">Workshop · 2024</div>
+          <h3>AI &amp; ML Workshop 2024</h3>
+          <div class="efc-meta">📅 Sep 18, 2024 · 9:00 AM – 1:00 PM<br>📍 CS Lab Block, ACST · Free Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:100%"></div></div>
+          <div class="seats-text"><span>50 attended</span><span>50 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('AI Workshop 2024 completed! 🤖')">View Recap</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Academic">
+        <div class="efc-banner" style="background:linear-gradient(135deg,#2e1a1a,#6e2d2d);">📚</div>
+        <div class="efc-body">
+          <div class="efc-tag">Academic · 2024</div>
+          <h3>Research Paper Symposium 2024</h3>
+          <div class="efc-meta">📅 Nov 25, 2024 · 10:00 AM – 4:00 PM<br>📍 Seminar Hall, ACST · Free Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:100%"></div></div>
+          <div class="seats-text"><span>100 attended</span><span>100 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('Symposium 2024 concluded! 📚')">View Recap</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Technology">
+        <div class="efc-banner tech">🚀</div>
+        <div class="efc-body">
+          <div class="efc-tag">Technology · 2025</div>
+          <h3>Innovate Summit 2025</h3>
+          <div class="efc-meta">📅 Feb 14, 2025 · 10:00 AM – 6:00 PM<br>📍 Main Auditorium, ACST · Free Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:100%"></div></div>
+          <div class="seats-text"><span>150 attended</span><span>150 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('Innovate Summit 2025 done! 🚀')">View Recap</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Academic">
+        <div class="efc-banner" style="background:linear-gradient(135deg,#1a1a2e,#2c2c54);">🧩</div>
+        <div class="efc-body">
+          <div class="efc-tag">Academic · 2025</div>
+          <h3>Hackathon 24Hrs 2025</h3>
+          <div class="efc-meta">📅 Mar 22, 2025 · 9:00 AM (24 hrs)<br>📍 CS Department, ACST · Free Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:100%"></div></div>
+          <div class="seats-text"><span>80 attended</span><span>80 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('Hackathon 2025 done! 🏆')">View Recap</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Cultural">
+        <div class="efc-banner culture">🎪</div>
+        <div class="efc-body">
+          <div class="efc-tag">Cultural · 2025</div>
+          <h3>Culturanza Fest 2025</h3>
+          <div class="efc-meta">📅 Apr 5, 2025 · 4:00 PM – 10:00 PM<br>📍 Open Grounds, ACST · ₹80 Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:100%"></div></div>
+          <div class="seats-text"><span>600 attended</span><span>600 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('Culturanza 2025 was spectacular! 🎪')">View Recap</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Workshop">
+        <div class="efc-banner" style="background:linear-gradient(135deg,#1a2e2e,#2d6e6e);">🧠</div>
+        <div class="efc-body">
+          <div class="efc-tag">Workshop · 2025</div>
+          <h3>Cybersecurity Bootcamp 2025</h3>
+          <div class="efc-meta">📅 Jun 20, 2025 · 9:00 AM – 5:00 PM<br>📍 CS Lab Block, ACST · ₹200 Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:100%"></div></div>
+          <div class="seats-text"><span>60 attended</span><span>60 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('Cybersecurity Bootcamp 2025 done! 🔐')">View Recap</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Sports">
+        <div class="efc-banner sports">🏏</div>
+        <div class="efc-body">
+          <div class="efc-tag">Sports · 2025</div>
+          <h3>Cricket Tournament 2025</h3>
+          <div class="efc-meta">📅 Aug 10, 2025 · 8:00 AM – 6:00 PM<br>📍 College Ground, ACST · Free Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:100%"></div></div>
+          <div class="seats-text"><span>250 attended</span><span>250 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('Cricket Tournament 2025 completed! 🏆')">View Recap</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Music">
+        <div class="efc-banner" style="background:linear-gradient(135deg,#3a1a1a,#6e2d2d);">🎤</div>
+        <div class="efc-body">
+          <div class="efc-tag">Music · 2025</div>
+          <h3>Battle of Bands 2025</h3>
+          <div class="efc-meta">📅 Oct 18, 2025 · 5:00 PM – 10:00 PM<br>📍 Amphitheatre, ACST · ₹150 Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:100%"></div></div>
+          <div class="seats-text"><span>300 attended</span><span>300 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('Battle of Bands 2025 rocked! 🎸')">View Recap</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Cultural">
+        <div class="efc-banner" style="background:linear-gradient(135deg,#2e1a2e,#6e2d6e);">🩰</div>
+        <div class="efc-body">
+          <div class="efc-tag">Cultural · 2025</div>
+          <h3>Dance &amp; Drama Festival 2025</h3>
+          <div class="efc-meta">📅 Nov 8, 2025 · 4:00 PM – 9:00 PM<br>📍 College Auditorium, ACST · ₹60 Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:100%"></div></div>
+          <div class="seats-text"><span>400 attended</span><span>400 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('Dance Fest 2025 was outstanding! 💃')">View Recap</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Academic">
+        <div class="efc-banner" style="background:linear-gradient(135deg,#2e1a1a,#6e2d2d);">🏆</div>
+        <div class="efc-body">
+          <div class="efc-tag">Academic · 2025</div>
+          <h3>National Quiz Championship 2025</h3>
+          <div class="efc-meta">📅 Dec 5, 2025 · 10:00 AM – 4:00 PM<br>📍 Seminar Hall, ACST · Free Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:100%"></div></div>
+          <div class="seats-text"><span>120 attended</span><span>120 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('Quiz Championship 2025 concluded! 🏆')">View Recap</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Technology">
+        <div class="efc-banner tech">🤖</div>
+        <div class="efc-body">
+          <div class="efc-tag">Technology · 2026</div>
+          <h3>RoboTech Expo 2026</h3>
+          <div class="efc-meta">📅 Jan 10, 2026 · 10:00 AM – 6:00 PM<br>📍 Main Auditorium, ACST · Free Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:100%"></div></div>
+          <div class="seats-text"><span>100 attended</span><span>100 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('RoboTech Expo 2026 was a hit! 🤖')">View Recap</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Cultural">
+        <div class="efc-banner culture">🌟</div>
+        <div class="efc-body">
+          <div class="efc-tag">Cultural · 2026</div>
+          <h3>Annual Day Celebration 2026</h3>
+          <div class="efc-meta">📅 Jan 25, 2026 · 4:00 PM – 9:00 PM<br>📍 Open Grounds, ACST · Free Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:100%"></div></div>
+          <div class="seats-text"><span>500 attended</span><span>500 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('Annual Day 2026 was spectacular! 🌟')">View Recap</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Sports">
+        <div class="efc-banner sports">⚽</div>
+        <div class="efc-body">
+          <div class="efc-tag">Sports · 2026</div>
+          <h3>Sports Carnival 2026</h3>
+          <div class="efc-meta">📅 Feb 7, 2026 · 8:00 AM – 5:00 PM<br>📍 Sports Complex, ACST · Free Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:100%"></div></div>
+          <div class="seats-text"><span>200 attended</span><span>200 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('Sports Carnival 2026 concluded! 🏆')">View Recap</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Workshop">
+        <div class="efc-banner" style="background:linear-gradient(135deg,#1a2e2e,#2d6e6e);">💡</div>
+        <div class="efc-body">
+          <div class="efc-tag">Workshop · 2026</div>
+          <h3>Startup &amp; Entrepreneurship Fest 2026</h3>
+          <div class="efc-meta">📅 Feb 20, 2026 · 10:00 AM – 5:00 PM<br>📍 Seminar Hall, ACST · Free Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:100%"></div></div>
+          <div class="seats-text"><span>100 attended</span><span>100 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('Startup Fest 2026 was inspiring! 💡')">View Recap</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Workshop">
+        <div class="efc-banner" style="background:linear-gradient(135deg,#1a2a1a,#2d5e2d);">🌱</div>
+        <div class="efc-body">
+          <div class="efc-tag">Workshop · 2026</div>
+          <h3>Green Campus Initiative 2026</h3>
+          <div class="efc-meta">📅 Feb 14, 2026 · 10:00 AM – 3:00 PM<br>📍 College Grounds, ACST · Free Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:100%"></div></div>
+          <div class="seats-text"><span>100 attended</span><span>100 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('Green Campus 2026 was a success! 🌱')">View Recap</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <!-- ══ UPCOMING EVENTS — After April 1, 2026 ══ -->
+      <div class="event-full-card" data-category="Technology" style="border:2px solid rgba(200,146,42,0.4);">
+        <div class="efc-banner tech">💻</div>
+        <div class="efc-body">
+          <div class="efc-tag" style="background:rgba(200,146,42,0.15);color:var(--gold);">Technology · Upcoming 2026</div>
+          <h3>TechVision Summit 2026</h3>
+          <div class="efc-meta">📅 Apr 12, 2026 · 10:00 AM – 6:00 PM<br>📍 Main Auditorium, ACST · Free Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:42%"></div></div>
+          <div class="seats-text"><span>42 registered</span><span>100 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('Registered for TechVision Summit 2026! ✅')">Register Now</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Cultural" style="border:2px solid rgba(200,146,42,0.4);">
+        <div class="efc-banner culture">🌸</div>
+        <div class="efc-body">
+          <div class="efc-tag" style="background:rgba(200,146,42,0.15);color:var(--gold);">Cultural · Upcoming 2026</div>
+          <h3>Spring Culturanza 2026</h3>
+          <div class="efc-meta">📅 Apr 26, 2026 · 4:00 PM – 10:00 PM<br>📍 Open Grounds, ACST · ₹80 Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:30%"></div></div>
+          <div class="seats-text"><span>150 registered</span><span>500 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('Registered for Spring Culturanza 2026! ✅')">Register Now</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Sports" style="border:2px solid rgba(200,146,42,0.4);">
+        <div class="efc-banner sports">🏆</div>
+        <div class="efc-body">
+          <div class="efc-tag" style="background:rgba(200,146,42,0.15);color:var(--gold);">Sports · Upcoming 2026</div>
+          <h3>Inter-Dept Sports League 2026</h3>
+          <div class="efc-meta">📅 May 10, 2026 · 8:00 AM – 5:00 PM<br>📍 Sports Complex, ACST · Free Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:20%"></div></div>
+          <div class="seats-text"><span>40 registered</span><span>200 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('Registered for Sports League 2026! ✅')">Register Now</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Academic" style="border:2px solid rgba(200,146,42,0.4);">
+        <div class="efc-banner" style="background:linear-gradient(135deg,#1a1a2e,#2c2c54);">🎓</div>
+        <div class="efc-body">
+          <div class="efc-tag" style="background:rgba(200,146,42,0.15);color:var(--gold);">Academic · Upcoming 2026</div>
+          <h3>Project Expo &amp; Tech Fair 2026</h3>
+          <div class="efc-meta">📅 May 22, 2026 · 10:00 AM – 5:00 PM<br>📍 CS &amp; IT Block, ACST · Free Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:15%"></div></div>
+          <div class="seats-text"><span>18 registered</span><span>120 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('Registered for Project Expo 2026! ✅')">Register Now</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Music" style="border:2px solid rgba(200,146,42,0.4);">
+        <div class="efc-banner" style="background:linear-gradient(135deg,#3a1a1a,#6e2d2d);">🎶</div>
+        <div class="efc-body">
+          <div class="efc-tag" style="background:rgba(200,146,42,0.15);color:var(--gold);">Music · Upcoming 2026</div>
+          <h3>Monsoon Music Night 2026</h3>
+          <div class="efc-meta">📅 Jun 14, 2026 · 5:00 PM – 10:00 PM<br>📍 Amphitheatre, ACST · ₹100 Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:10%"></div></div>
+          <div class="seats-text"><span>30 registered</span><span>300 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('Registered for Monsoon Music Night 2026! ✅')">Register Now</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+      <div class="event-full-card" data-category="Workshop" style="border:2px solid rgba(200,146,42,0.4);">
+        <div class="efc-banner" style="background:linear-gradient(135deg,#1a2e2e,#2d6e6e);">🧠</div>
+        <div class="efc-body">
+          <div class="efc-tag" style="background:rgba(200,146,42,0.15);color:var(--gold);">Workshop · Upcoming 2026</div>
+          <h3>AI &amp; Data Science Bootcamp 2026</h3>
+          <div class="efc-meta">📅 Jun 28, 2026 · 9:00 AM – 5:00 PM<br>📍 CS Lab Block, ACST · ₹250 Entry</div>
+          <div class="seats-bar"><div class="seats-fill" style="width:8%"></div></div>
+          <div class="seats-text"><span>6 registered</span><span>80 total</span></div>
+          <div class="efc-actions"><button class="btn-sm gold" onclick="showToast('Registered for AI Bootcamp 2026! ✅')">Register Now</button><button class="btn-sm ghost">Learn More</button></div>
+        </div>
+      </div>
+
+    </div><!-- end eventsGrid -->
+  </div><!-- end events-page-body -->
+  <footer class="site-footer" style="margin-top:2rem;">
+    <div class="footer-bottom" style="border-top:none;padding-top:0;">
+      <span>© 2024–2026 <span class="hl">CEMS</span> · Abhinav College of Science and Technology</span>
+      <span>Developed by Rohit Kadam · React · Node.js · MongoDB</span>
+    </div>
+  </footer>
+</div><!-- end page-events -->
+
+<!-- ══════════ REGISTER ══════════ -->
+<div id="page-register" class="page">
+  <div class="auth-page">
+    <div class="auth-box">
+      <h2>Create Account</h2>
+      <p class="sub">Already have an account? <a onclick="showPage('login')">Sign in here</a></p>
+      <div class="form-row">
+        <div class="form-group"><label>First Name</label><input type="text" placeholder="Rahul" /></div>
+        <div class="form-group"><label>Last Name</label><input type="text" placeholder="Sharma" /></div>
+      </div>
+      <div class="form-group"><label>College Email</label><input type="email" placeholder="rohit@acst.edu.in" /></div>
+      <div class="form-group"><label>Roll Number</label><input type="text" placeholder="CS21B001" /></div>
+      <div class="form-group"><label>Department</label>
+        <select><option>Computer Science</option><option>Electronics &amp; Communication</option><option>Mechanical Engineering</option><option>Civil Engineering</option><option>Business Administration</option><option>Arts &amp; Humanities</option></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Year</label>
+          <select><option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option></select>
+        </div>
+        <div class="form-group"><label>Role</label>
+          <select><option>Student</option><option>Event Organiser</option><option>Faculty</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label>Password</label><input type="password" placeholder="Create a strong password" /></div>
+      <div class="form-group"><label>Confirm Password</label><input type="password" placeholder="Repeat password" /></div>
+      <div class="form-check">
+        <input type="checkbox" id="terms" />
+        <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+      </div>
+      <button class="btn-auth" onclick="showToast('Account created successfully! 🎉')">Create Account</button>
+      <div class="auth-divider">or continue with</div>
+      <button class="social-btn" onclick="showToast('Google sign-up coming soon!')">🔵 &nbsp; Continue with Google</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ LOGIN ══════════ -->
+<div id="page-login" class="page">
+  <div class="auth-page">
+    <div class="auth-box">
+      <h2>Welcome Back</h2>
+      <p class="sub">New here? <a onclick="showPage('register')">Create a free account</a></p>
+      <div class="form-group"><label>College Email</label><input type="email" placeholder="rahul@college.edu" /></div>
+      <div class="form-group"><label>Password</label><input type="password" placeholder="Your password" /></div>
+      <div style="text-align:right;margin-bottom:1.5rem;">
+        <a href="#" style="font-size:0.82rem;color:var(--gold-light);text-decoration:none;">Forgot password?</a>
+      </div>
+      <button class="btn-auth" onclick="showToast('Logged in successfully! 👋')">Sign In</button>
+      <div class="auth-divider">or continue with</div>
+      <button class="social-btn" onclick="showToast('Google sign-in coming soon!')">🔵 &nbsp; Continue with Google</button>
+      <p style="text-align:center;margin-top:1.5rem;font-size:0.82rem;color:#666;">
+        Are you an organiser? <a onclick="showToast('Organiser portal coming soon!')" style="color:var(--gold-light);text-decoration:none;cursor:pointer;">Login as Organiser</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ ABOUT ══════════ -->
+<div id="page-about" class="page">
+  <div class="page-hero">
+    <div class="section-label">Who We Are</div>
+    <h1>About Us</h1>
+    <p>Learn about the project built for Abhinav College of Science and Technology by Rohit Kadam.</p>
+  </div>
+
+  <!-- Intro + Stats -->
+  <div class="about-intro">
+    <div class="about-text">
+      <div class="section-label">The Project</div>
+      <h2 class="section-title" style="margin-bottom:1.2rem;">College Event Management System</h2>
+      <p>CEMS is a comprehensive web platform developed as a college capstone project by <strong>Rohit Kadam</strong> to address the fragmented, inefficient processes that colleges face when managing events across departments.</p>
+      <p>By unifying registration, communication, scheduling, and analytics into one platform, CEMS empowers both students and organisers to create more meaningful campus experiences.</p>
+      <p>Built using the MERN stack (MongoDB, Express.js, React.js, Node.js), the system is designed to scale from a single department to an entire institution.</p>
+      <p>Since its launch in 2024, CEMS has successfully managed <strong>20+ events</strong> across <strong>3 academic years</strong>, with over 4,000 student interactions recorded on the platform.</p>
+    </div>
+    <div class="about-visual">
+      <div class="about-stat-card"><div class="big">20+</div><div class="lbl">Events Hosted</div></div>
+      <div class="about-stat-card"><div class="big">4K+</div><div class="lbl">Students</div></div>
+      <div class="about-stat-card"><div class="big">12</div><div class="lbl">Departments</div></div>
+      <div class="about-stat-card"><div class="big">98%</div><div class="lbl">Satisfaction</div></div>
+    </div>
+  </div>
+
+  <!-- ── VISION SECTION ── -->
+  <div style="background:var(--deep);padding:5rem 5% 0;">
+    <div style="text-align:center;margin-bottom:3.5rem;">
+      <div class="section-label" style="color:var(--gold);">What Drives Us</div>
+      <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:#fff;font-weight:900;margin-top:0.5rem;">Our Vision &amp; Our Mission</h2>
+      <p style="color:#888;font-size:0.95rem;margin-top:0.8rem;max-width:520px;margin-left:auto;margin-right:auto;line-height:1.7;">At CEMS, every line of code is guided by a clear purpose — to transform how Abhinav College of Science and Technology organises and experiences campus life.</p>
+    </div>
+
+    <!-- Vision + Mission side-by-side hero cards -->
+    <div class="vm-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:2.5rem;">
+
+      <!-- OUR VISION -->
+      <div style="position:relative;background:linear-gradient(135deg,rgba(200,146,42,0.15),rgba(200,146,42,0.04));border:1px solid rgba(200,146,42,0.35);border-radius:1.4rem;padding:3rem 2.5rem;overflow:hidden;">
+        <div style="position:absolute;top:-20px;right:-20px;font-size:7rem;opacity:0.06;line-height:1;">🔭</div>
+        <div style="display:inline-block;background:var(--gold);color:var(--ink);font-size:0.7rem;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;padding:0.3rem 0.9rem;border-radius:2rem;margin-bottom:1.5rem;">Our Vision</div>
+        <h3 style="font-family:'Playfair Display',serif;color:#fff;font-size:1.5rem;line-height:1.3;margin-bottom:1.2rem;">To be the digital backbone of every campus event across India.</h3>
+        <p style="color:#bbb;font-size:0.92rem;line-height:1.8;margin-bottom:1.5rem;">We envision a future where no student misses an opportunity because of poor communication or disorganised processes. CEMS aims to be the trusted platform where every college event — from a small workshop to a national fest — is seamlessly managed, promoted, and remembered.</p>
+        <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:0.7rem;">
+          <li style="display:flex;align-items:flex-start;gap:0.7rem;color:#ccc;font-size:0.87rem;">
+            <span style="color:var(--gold);font-size:1rem;flex-shrink:0;">✦</span> A unified platform for all departments and event types
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:0.7rem;color:#ccc;font-size:0.87rem;">
+            <span style="color:var(--gold);font-size:1rem;flex-shrink:0;">✦</span> Real-time data that helps institutions make smarter decisions
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:0.7rem;color:#ccc;font-size:0.87rem;">
+            <span style="color:var(--gold);font-size:1rem;flex-shrink:0;">✦</span> Scalable from a single college to a multi-campus university
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:0.7rem;color:#ccc;font-size:0.87rem;">
+            <span style="color:var(--gold);font-size:1rem;flex-shrink:0;">✦</span> Technology that celebrates and preserves campus culture
+          </li>
+        </ul>
+      </div>
+
+      <!-- OUR MISSION -->
+      <div style="position:relative;background:linear-gradient(135deg,rgba(184,75,47,0.15),rgba(184,75,47,0.04));border:1px solid rgba(184,75,47,0.35);border-radius:1.4rem;padding:3rem 2.5rem;overflow:hidden;">
+        <div style="position:absolute;top:-20px;right:-20px;font-size:7rem;opacity:0.06;line-height:1;">🎯</div>
+        <div style="display:inline-block;background:var(--rust);color:#fff;font-size:0.7rem;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;padding:0.3rem 0.9rem;border-radius:2rem;margin-bottom:1.5rem;">Our Mission</div>
+        <h3 style="font-family:'Playfair Display',serif;color:#fff;font-size:1.5rem;line-height:1.3;margin-bottom:1.2rem;">To simplify, digitise, and elevate the entire college event lifecycle.</h3>
+        <p style="color:#bbb;font-size:0.92rem;line-height:1.8;margin-bottom:1.5rem;">Our mission is to eliminate the chaos of spreadsheets, WhatsApp groups, and paper forms that plague college event planning. We build intuitive tools that empower students, faculty, and organisers to collaborate effortlessly — so they can focus on what truly matters: creating unforgettable experiences.</p>
+        <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:0.7rem;">
+          <li style="display:flex;align-items:flex-start;gap:0.7rem;color:#ccc;font-size:0.87rem;">
+            <span style="color:var(--rust);font-size:1rem;flex-shrink:0;">✦</span> Streamlined registration and ticketing in under 60 seconds
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:0.7rem;color:#ccc;font-size:0.87rem;">
+            <span style="color:var(--rust);font-size:1rem;flex-shrink:0;">✦</span> Instant notifications so no student misses an update
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:0.7rem;color:#ccc;font-size:0.87rem;">
+            <span style="color:var(--rust);font-size:1rem;flex-shrink:0;">✦</span> Transparent analytics for organisers and faculty
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:0.7rem;color:#ccc;font-size:0.87rem;">
+            <span style="color:var(--rust);font-size:1rem;flex-shrink:0;">✦</span> A joyful, inclusive experience for every student on campus
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Core Values row -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.2rem;padding-bottom:4rem;">
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:1rem;padding:1.6rem;text-align:center;">
+        <div style="font-size:1.8rem;margin-bottom:0.7rem;">💡</div>
+        <h4 style="color:#fff;font-size:0.95rem;font-weight:600;margin-bottom:0.4rem;">Innovation</h4>
+        <p style="color:#888;font-size:0.8rem;line-height:1.6;">We constantly rethink how events are managed, always asking: how can this be simpler?</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:1rem;padding:1.6rem;text-align:center;">
+        <div style="font-size:1.8rem;margin-bottom:0.7rem;">🤝</div>
+        <h4 style="color:#fff;font-size:0.95rem;font-weight:600;margin-bottom:0.4rem;">Inclusivity</h4>
+        <p style="color:#888;font-size:0.8rem;line-height:1.6;">Every student deserves equal access to opportunities. CEMS is built for everyone on campus.</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:1rem;padding:1.6rem;text-align:center;">
+        <div style="font-size:1.8rem;margin-bottom:0.7rem;">🔍</div>
+        <h4 style="color:#fff;font-size:0.95rem;font-weight:600;margin-bottom:0.4rem;">Transparency</h4>
+        <p style="color:#888;font-size:0.8rem;line-height:1.6;">Clear data, open communication, and honest feedback loops between students and organisers.</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:1rem;padding:1.6rem;text-align:center;">
+        <div style="font-size:1.8rem;margin-bottom:0.7rem;">🏅</div>
+        <h4 style="color:#fff;font-size:0.95rem;font-weight:600;margin-bottom:0.4rem;">Excellence</h4>
+        <p style="color:#888;font-size:0.8rem;line-height:1.6;">From UI design to backend performance, we hold every part of CEMS to the highest standard.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Developer -->
+  <div class="team-section">
+    <div class="section-label">The Creator</div>
+    <h2 class="section-title">Meet the Developer</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem;margin-top:2.5rem;">
+      <!-- Rohit Kadam - main card -->
+      <div style="background:#fff;border-radius:1.2rem;padding:2.5rem;border:2px solid var(--gold);box-shadow:0 8px 32px rgba(200,146,42,0.12);display:flex;gap:1.5rem;align-items:flex-start;">
+        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--rust));display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;">👨‍💻</div>
+        <div>
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:0.2rem;">Rohit Kadam</h3>
+          <span style="font-size:0.8rem;color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Lead Developer &amp; Designer</span>
+          <p style="color:var(--muted);font-size:0.88rem;line-height:1.7;margin-top:0.8rem;">Final Year B.Tech student specialising in Full Stack Web Development. Designed and built CEMS from scratch using the MERN stack. Passionate about building tools that improve campus life.</p>
+          <div style="display:flex;gap:0.6rem;margin-top:1rem;flex-wrap:wrap;">
+            <span style="background:rgba(200,146,42,0.1);color:var(--gold);font-size:0.72rem;padding:0.2rem 0.7rem;border-radius:2rem;font-weight:600;">React.js</span>
+            <span style="background:rgba(200,146,42,0.1);color:var(--gold);font-size:0.72rem;padding:0.2rem 0.7rem;border-radius:2rem;font-weight:600;">Node.js</span>
+            <span style="background:rgba(200,146,42,0.1);color:var(--gold);font-size:0.72rem;padding:0.2rem 0.7rem;border-radius:2rem;font-weight:600;">MongoDB</span>
+            <span style="background:rgba(200,146,42,0.1);color:var(--gold);font-size:0.72rem;padding:0.2rem 0.7rem;border-radius:2rem;font-weight:600;">UI/UX</span>
+          </div>
+        </div>
+      </div>
+      <!-- Guide -->
+      <div style="background:#fff;border-radius:1.2rem;padding:2.5rem;border:1px solid var(--soft);display:flex;gap:1.5rem;align-items:flex-start;">
+        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--deep),var(--mid));display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;">👨‍🏫</div>
+        <div>
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:0.2rem;">Prof. S. Kumar</h3>
+          <span style="font-size:0.8rem;color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Project Guide &amp; Mentor</span>
+          <p style="color:var(--muted);font-size:0.88rem;line-height:1.7;margin-top:0.8rem;">Associate Professor, Department of Computer Science. With 15+ years of experience in software engineering and project mentorship, guided the development and architecture of CEMS.</p>
+          <div style="display:flex;gap:0.6rem;margin-top:1rem;flex-wrap:wrap;">
+            <span style="background:rgba(26,26,46,0.08);color:var(--deep);font-size:0.72rem;padding:0.2rem 0.7rem;border-radius:2rem;font-weight:600;">Software Engineering</span>
+            <span style="background:rgba(26,26,46,0.08);color:var(--deep);font-size:0.72rem;padding:0.2rem 0.7rem;border-radius:2rem;font-weight:600;">System Design</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tech Stack -->
+  <div class="tech-section-about">
+    <div class="section-label">Technology</div>
+    <h2 class="section-title">Tech Stack</h2>
+    <div class="tech-cols">
+      <div class="tech-block">
+        <h3>Frontend</h3>
+        <div class="tech-item"><div class="tech-dot"></div><div><strong>React.js</strong><span>Reusable UI components &amp; Virtual DOM for fast rendering</span></div></div>
+        <div class="tech-item"><div class="tech-dot"></div><div><strong>HTML5 / CSS3</strong><span>Semantic markup and responsive styling</span></div></div>
+        <div class="tech-item"><div class="tech-dot"></div><div><strong>JavaScript (ES6+)</strong><span>Dynamic interactivity and state management</span></div></div>
+        <div class="tech-item"><div class="tech-dot"></div><div><strong>React Router</strong><span>Client-side routing for smooth navigation</span></div></div>
+      </div>
+      <div class="tech-block">
+        <h3>Backend</h3>
+        <div class="tech-item"><div class="tech-dot"></div><div><strong>Node.js</strong><span>Powerful runtime for handling concurrent requests</span></div></div>
+        <div class="tech-item"><div class="tech-dot"></div><div><strong>Express.js</strong><span>Lightweight framework for clean API development</span></div></div>
+        <div class="tech-item"><div class="tech-dot"></div><div><strong>MongoDB</strong><span>Flexible NoSQL database for diverse data types</span></div></div>
+        <div class="tech-item"><div class="tech-dot"></div><div><strong>JWT Auth</strong><span>Secure token-based user authentication</span></div></div>
+      </div>
+    </div>
+    <!-- Timeline -->
+    <div style="margin-top:4rem;">
+      <div class="section-label">Project Journey</div>
+      <h2 class="section-title" style="margin-bottom:2.5rem;">Development Timeline</h2>
+      <div style="position:relative;padding-left:2rem;border-left:2px solid var(--gold);">
+        <div style="margin-bottom:2rem;position:relative;">
+          <div style="position:absolute;left:-2.45rem;top:4px;width:14px;height:14px;border-radius:50%;background:var(--gold);border:3px solid var(--cream);"></div>
+          <div style="font-size:0.75rem;color:var(--gold);font-weight:700;letter-spacing:0.1em;text-transform:uppercase;">Jan 2024</div>
+          <h4 style="font-size:1rem;margin:0.3rem 0 0.4rem;">Project Inception</h4>
+          <p style="color:var(--muted);font-size:0.87rem;line-height:1.6;">Project proposal approved. Requirement gathering and system design started. Tech stack finalised as MERN.</p>
+        </div>
+        <div style="margin-bottom:2rem;position:relative;">
+          <div style="position:absolute;left:-2.45rem;top:4px;width:14px;height:14px;border-radius:50%;background:var(--gold);border:3px solid var(--cream);"></div>
+          <div style="font-size:0.75rem;color:var(--gold);font-weight:700;letter-spacing:0.1em;text-transform:uppercase;">Mar 2024</div>
+          <h4 style="font-size:1rem;margin:0.3rem 0 0.4rem;">Alpha Launch</h4>
+          <p style="color:var(--muted);font-size:0.87rem;line-height:1.6;">Core features built: event listing, student registration, admin panel. First real event — TechFest 2024 — managed on the platform.</p>
+        </div>
+        <div style="margin-bottom:2rem;position:relative;">
+          <div style="position:absolute;left:-2.45rem;top:4px;width:14px;height:14px;border-radius:50%;background:var(--gold);border:3px solid var(--cream);"></div>
+          <div style="font-size:0.75rem;color:var(--gold);font-weight:700;letter-spacing:0.1em;text-transform:uppercase;">Aug 2024</div>
+          <h4 style="font-size:1rem;margin:0.3rem 0 0.4rem;">Beta Release &amp; Awards</h4>
+          <p style="color:var(--muted);font-size:0.87rem;line-height:1.6;">Added notifications, analytics, and feedback module. Won <strong>Best Final Year Project 2024</strong> at the department exhibition.</p>
+        </div>
+        <div style="margin-bottom:2rem;position:relative;">
+          <div style="position:absolute;left:-2.45rem;top:4px;width:14px;height:14px;border-radius:50%;background:var(--gold);border:3px solid var(--cream);"></div>
+          <div style="font-size:0.75rem;color:var(--gold);font-weight:700;letter-spacing:0.1em;text-transform:uppercase;">Jan 2025</div>
+          <h4 style="font-size:1rem;margin:0.3rem 0 0.4rem;">V2.0 — Major Upgrade</h4>
+          <p style="color:var(--muted);font-size:0.87rem;line-height:1.6;">Full redesign with improved UI/UX. Added ticketing, seat tracking, and organiser dashboard. 1,000+ active users onboarded.</p>
+        </div>
+        <div style="position:relative;">
+          <div style="position:absolute;left:-2.45rem;top:4px;width:14px;height:14px;border-radius:50%;background:var(--rust);border:3px solid var(--cream);"></div>
+          <div style="font-size:0.75rem;color:var(--rust);font-weight:700;letter-spacing:0.1em;text-transform:uppercase;">Feb 2026 — Now</div>
+          <h4 style="font-size:1rem;margin:0.3rem 0 0.4rem;">V3.0 — Live &amp; Growing</h4>
+          <p style="color:var(--muted);font-size:0.87rem;line-height:1.6;">AI-powered event recommendations in development. Mobile app prototype underway. Platform now manages 20+ events per academic year.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-bottom" style="border-top:none;padding-top:0;">
+      <span>© 2024–2026 <span class="hl">CEMS</span> · Developed by Rohit Kadam</span><span>Built with React · Node.js · MongoDB</span>
+    </div>
+  </footer>
+</div>
+
+<!-- ══════════ CONTACT ══════════ -->
+<div id="page-contact" class="page">
+  <div class="page-hero">
+    <div class="section-label">Get in Touch</div>
+    <h1>Contact Us</h1>
+    <p>Have a question, feedback, or want to collaborate? We'd love to hear from you.</p>
+  </div>
+
+  <div class="contact-body">
+    <div class="contact-info">
+      <h2>Let's Talk</h2>
+      <p>Reach out for event queries, technical support, partnership opportunities, or any feedback about the platform.</p>
+      <div class="contact-item"><div class="c-icon">👨‍💻</div><div class="c-text"><strong>Developer</strong><span>Rohit Kadam · Final Year B.Tech (CS)</span></div></div>
+      <div class="contact-item"><div class="c-icon">📧</div><div class="c-text"><strong>Email</strong><span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d6a4b9bebfa2f8bdb7b2b7bb96b5b9babab3b1b3f8b3b2a3">[email&#160;protected]</a></span></div></div>
+      <div class="contact-item"><div class="c-icon">📞</div><div class="c-text"><strong>Phone</strong><span>+91 98765 43210</span></div></div>
+      <div class="contact-item"><div class="c-icon">📍</div><div class="c-text"><strong>Location</strong><span>Student Activity Centre, Block B,<br>Abhinav College of Science and Technology, Pune – 411041</span></div></div>
+      <div class="contact-item"><div class="c-icon">🕐</div><div class="c-text"><strong>Office Hours</strong><span>Mon – Fri, 9:00 AM – 5:00 PM</span></div></div>
+      <div class="contact-item"><div class="c-icon">🌐</div><div class="c-text"><strong>Website</strong><span>rohitkadam.github.io/cems</span></div></div>
+
+      <!-- Social Links -->
+      <div style="margin-top:1.5rem;">
+        <div style="font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:0.8rem;">Connect</div>
+        <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+          <button onclick="showToast('Opening GitHub...')" style="padding:0.5rem 1.1rem;border-radius:0.4rem;border:1px solid var(--soft);background:#fff;font-size:0.82rem;cursor:pointer;font-weight:500;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--soft)'">🐙 GitHub</button>
+          <button onclick="showToast('Opening LinkedIn...')" style="padding:0.5rem 1.1rem;border-radius:0.4rem;border:1px solid var(--soft);background:#fff;font-size:0.82rem;cursor:pointer;font-weight:500;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--soft)'">💼 LinkedIn</button>
+          <button onclick="showToast('Opening Instagram...')" style="padding:0.5rem 1.1rem;border-radius:0.4rem;border:1px solid var(--soft);background:#fff;font-size:0.82rem;cursor:pointer;font-weight:500;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--soft)'">📸 Instagram</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="contact-form" style="margin-bottom:1.5rem;">
+        <h3>Send a Message</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div class="cf-group"><label>First Name</label><input type="text" placeholder="Rohit" /></div>
+          <div class="cf-group"><label>Last Name</label><input type="text" placeholder="Kadam" /></div>
+        </div>
+        <div class="cf-group"><label>Email</label><input type="email" placeholder="rohit@college.edu" /></div>
+        <div class="cf-group"><label>Phone (optional)</label><input type="tel" placeholder="+91 98765 43210" /></div>
+        <div class="cf-group"><label>Subject</label>
+          <select><option>General Enquiry</option><option>Event Registration Help</option><option>Technical Support</option><option>Organiser Partnership</option><option>Sponsorship</option><option>Bug Report</option><option>Feature Request</option><option>Feedback</option></select>
+        </div>
+        <div class="cf-group"><label>Message</label><textarea placeholder="Write your message here..."></textarea></div>
+        <button class="btn-contact" onclick="showToast('Message sent! We\'ll get back within 24 hours. 📬')">Send Message</button>
+      </div>
+
+      <!-- FAQ -->
+      <div style="background:#fff;border-radius:1.2rem;padding:2rem;box-shadow:0 4px 20px rgba(0,0,0,0.05);">
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:1.2rem;padding-bottom:0.6rem;border-bottom:1px solid var(--soft);">Frequently Asked Questions</h3>
+        <div class="faq-item" onclick="toggleFaq(this)" style="padding:0.9rem 0;border-bottom:1px solid var(--soft);cursor:pointer;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <strong style="font-size:0.9rem;">How do I register for an event?</strong>
+            <span class="faq-arrow" style="color:var(--gold);font-size:1.1rem;transition:transform 0.3s;">▾</span>
+          </div>
+          <div class="faq-answer" style="display:none;color:var(--muted);font-size:0.85rem;line-height:1.6;margin-top:0.6rem;">Go to the Events page, find your event, and click "Register Now". You'll need to be logged in to complete registration.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)" style="padding:0.9rem 0;border-bottom:1px solid var(--soft);cursor:pointer;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <strong style="font-size:0.9rem;">Can I cancel my registration?</strong>
+            <span class="faq-arrow" style="color:var(--gold);font-size:1.1rem;transition:transform 0.3s;">▾</span>
+          </div>
+          <div class="faq-answer" style="display:none;color:var(--muted);font-size:0.85rem;line-height:1.6;margin-top:0.6rem;">Yes, you can cancel up to 24 hours before the event from your Dashboard under "My Registrations".</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)" style="padding:0.9rem 0;border-bottom:1px solid var(--soft);cursor:pointer;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <strong style="font-size:0.9rem;">How do I become an Event Organiser?</strong>
+            <span class="faq-arrow" style="color:var(--gold);font-size:1.1rem;transition:transform 0.3s;">▾</span>
+          </div>
+          <div class="faq-answer" style="display:none;color:var(--muted);font-size:0.85rem;line-height:1.6;margin-top:0.6rem;">Register with the "Event Organiser" role, then contact us via this form with your department and event proposal for approval.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)" style="padding:0.9rem 0;cursor:pointer;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <strong style="font-size:0.9rem;">Is CEMS free to use?</strong>
+            <span class="faq-arrow" style="color:var(--gold);font-size:1.1rem;transition:transform 0.3s;">▾</span>
+          </div>
+          <div class="faq-answer" style="display:none;color:var(--muted);font-size:0.85rem;line-height:1.6;margin-top:0.6rem;">Yes! CEMS is completely free for students. Some events may have a nominal entry fee set by the organiser.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ DASHBOARD ══════════ -->
+<div id="page-dashboard" class="page">
+  <div class="dashboard-body">
+
+    <!-- Header -->
+    <div class="dash-header">
+      <div style="display:flex;align-items:center;gap:1.2rem;">
+        <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--rust));display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;">👨‍💻</div>
+        <div>
+          <h2>Welcome back, Rohit! 👋</h2>
+          <div class="sub">Rohit Kadam · CS Final Year · Roll No: CS21B042</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:0.7rem;flex-wrap:wrap;">
+        <button class="btn-sm ghost" onclick="showPage('events')">Browse Events</button>
+        <button class="btn-sm gold" onclick="showToast('Profile settings coming soon! ⚙️')">⚙️ Settings</button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="dash-stats">
+      <div class="ds-card"><div class="ds-num">7</div><div class="ds-label">Total Registered</div></div>
+      <div class="ds-card" style="border-color:#2ecc71;"><div class="ds-num" style="color:#27ae60;">5</div><div class="ds-label">Confirmed</div></div>
+      <div class="ds-card" style="border-color:var(--gold);"><div class="ds-num" style="color:var(--gold);">2</div><div class="ds-label">Upcoming</div></div>
+      <div class="ds-card" style="border-color:var(--rust);"><div class="ds-num" style="color:var(--rust);">3</div><div class="ds-label">Events Attended</div></div>
+      <div class="ds-card" style="border-color:var(--mid);"><div class="ds-num" style="color:var(--mid);">8</div><div class="ds-label">Notifications</div></div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div style="margin-bottom:2rem;">
+      <div style="font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:1rem;">Quick Actions</div>
+      <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+        <button onclick="showPage('events')" style="padding:0.65rem 1.3rem;background:#fff;border:1px solid var(--soft);border-radius:0.5rem;font-size:0.85rem;cursor:pointer;font-weight:500;transition:all 0.2s;display:flex;align-items:center;gap:0.5rem;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--soft)'">🎟️ Register for Event</button>
+        <button onclick="showToast('Certificate download coming soon! 📄')" style="padding:0.65rem 1.3rem;background:#fff;border:1px solid var(--soft);border-radius:0.5rem;font-size:0.85rem;cursor:pointer;font-weight:500;transition:all 0.2s;display:flex;align-items:center;gap:0.5rem;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--soft)'">📄 Download Certificate</button>
+        <button onclick="showToast('Feedback form opening... 📝')" style="padding:0.65rem 1.3rem;background:#fff;border:1px solid var(--soft);border-radius:0.5rem;font-size:0.85rem;cursor:pointer;font-weight:500;transition:all 0.2s;display:flex;align-items:center;gap:0.5rem;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--soft)'">⭐ Give Feedback</button>
+        <button onclick="showPage('contact')" style="padding:0.65rem 1.3rem;background:#fff;border:1px solid var(--soft);border-radius:0.5rem;font-size:0.85rem;cursor:pointer;font-weight:500;transition:all 0.2s;display:flex;align-items:center;gap:0.5rem;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--soft)'">💬 Contact Support</button>
+      </div>
+    </div>
+
+    <!-- Main grid -->
+    <div class="dash-grid">
+      <!-- Registrations -->
+      <div>
+        <div class="dash-card" style="margin-bottom:1.5rem;">
+          <h3>My Registrations</h3>
+          <div class="reg-item">
+            <div><div class="ri-title">TechFest 2024</div><div class="ri-date">📅 Mar 10, 2024 · Technology · Main Auditorium</div></div>
+            <span class="badge confirmed">Attended ✓</span>
+          </div>
+          <div class="reg-item">
+            <div><div class="ri-title">AI &amp; ML Workshop 2024</div><div class="ri-date">📅 Sep 18, 2024 · Workshop · CS Lab</div></div>
+            <span class="badge confirmed">Attended ✓</span>
+          </div>
+          <div class="reg-item">
+            <div><div class="ri-title">Cricket Tournament 2025</div><div class="ri-date">📅 Aug 10, 2025 · Sports · College Ground</div></div>
+            <span class="badge confirmed">Attended ✓</span>
+          </div>
+          <div class="reg-item">
+            <div><div class="ri-title">RoboTech Expo 2026</div><div class="ri-date">📅 Jan 10, 2026 · Technology · Main Auditorium</div></div>
+            <span class="badge confirmed">Attended ✓</span>
+          </div>
+          <div class="reg-item">
+            <div><div class="ri-title">Sports Carnival 2026</div><div class="ri-date">📅 Feb 7, 2026 · Sports · Sports Complex</div></div>
+            <span class="badge confirmed">Attended ✓</span>
+          </div>
+          <div class="reg-item">
+            <div><div class="ri-title">TechVision Summit 2026</div><div class="ri-date">📅 Apr 12, 2026 · Technology · Main Auditorium</div></div>
+            <span class="badge confirmed">Confirmed</span>
+          </div>
+          <div class="reg-item">
+            <div><div class="ri-title">Spring Culturanza 2026</div><div class="ri-date">📅 Apr 26, 2026 · Cultural · Open Grounds</div></div>
+            <span class="badge pending">Pending</span>
+          </div>
+        </div>
+
+        <!-- Upcoming events mini calendar -->
+        <div class="dash-card">
+          <h3>Upcoming Events — Apr–Jun 2026</h3>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:0.5rem;">
+            <div style="background:linear-gradient(135deg,var(--deep),var(--mid));border-radius:0.75rem;padding:1.2rem;color:#fff;">
+              <div style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold-light);margin-bottom:0.4rem;">Apr 12 · Technology</div>
+              <div style="font-weight:600;font-size:0.92rem;">TechVision Summit 2026</div>
+              <div style="font-size:0.75rem;color:#aaa;margin-top:0.3rem;">📍 Main Auditorium · 10:00 AM</div>
+            </div>
+            <div style="background:linear-gradient(135deg,#2e1a2e,#6e2d6e);border-radius:0.75rem;padding:1.2rem;color:#fff;">
+              <div style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold-light);margin-bottom:0.4rem;">Apr 26 · Cultural</div>
+              <div style="font-weight:600;font-size:0.92rem;">Spring Culturanza 2026</div>
+              <div style="font-size:0.75rem;color:#aaa;margin-top:0.3rem;">📍 Open Grounds · 4:00 PM</div>
+            </div>
+            <div style="background:linear-gradient(135deg,#1a2e2e,#2d6e6e);border-radius:0.75rem;padding:1.2rem;color:#fff;">
+              <div style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold-light);margin-bottom:0.4rem;">May 22 · Academic</div>
+              <div style="font-weight:600;font-size:0.92rem;">Project Expo &amp; Tech Fair 2026</div>
+              <div style="font-size:0.75rem;color:#aaa;margin-top:0.3rem;">📍 CS &amp; IT Block · 10:00 AM</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column -->
+      <div>
+        <!-- Notifications -->
+        <div class="dash-card" style="margin-bottom:1.5rem;">
+          <h3>Notifications <span style="background:var(--gold);color:var(--ink);font-size:0.65rem;padding:0.15rem 0.5rem;border-radius:2rem;font-weight:700;margin-left:0.4rem;">5 New</span></h3>
+          <div class="notif-item"><div class="notif-dot"></div><div class="notif-text"><strong>TechVision Summit 2026</strong> – Registration confirmed! Event on Apr 12 at 10:00 AM.</div></div>
+          <div class="notif-item"><div class="notif-dot"></div><div class="notif-text"><strong>Spring Culturanza 2026</strong> – Registration under review. Decision within 48 hours.</div></div>
+          <div class="notif-item"><div class="notif-dot"></div><div class="notif-text"><strong>Project Expo 2026</strong> – New event open! Only 102 seats remaining. Register by May 15.</div></div>
+          <div class="notif-item"><div class="notif-dot" style="background:#888;"></div><div class="notif-text"><strong>RoboTech Expo 2026</strong> – Certificate now available for download. 🎓</div></div>
+          <div class="notif-item"><div class="notif-dot" style="background:#888;"></div><div class="notif-text"><strong>Sports Carnival 2026</strong> – Your feedback is pending. Share your experience!</div></div>
+          <div class="notif-item"><div class="notif-dot" style="background:#888;"></div><div class="notif-text"><strong>AI Bootcamp 2026</strong> – Jun 28 · Early bird seats filling fast. Only 74 left!</div></div>
+          <div style="margin-top:0.8rem;">
+            <button onclick="showToast('All notifications marked as read ✓')" style="font-size:0.78rem;color:var(--gold);background:none;border:none;cursor:pointer;font-weight:600;">Mark all as read →</button>
+          </div>
+        </div>
+
+        <!-- Profile card -->
+        <div class="dash-card">
+          <h3>My Profile</h3>
+          <div style="display:flex;flex-direction:column;gap:0.7rem;margin-top:0.5rem;">
+            <div style="display:flex;justify-content:space-between;font-size:0.85rem;padding:0.5rem 0;border-bottom:1px solid var(--soft);">
+              <span style="color:var(--muted);">Full Name</span><span style="font-weight:500;">Rohit Kadam</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.85rem;padding:0.5rem 0;border-bottom:1px solid var(--soft);">
+              <span style="color:var(--muted);">Roll No.</span><span style="font-weight:500;">CS21B042</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.85rem;padding:0.5rem 0;border-bottom:1px solid var(--soft);">
+              <span style="color:var(--muted);">Department</span><span style="font-weight:500;">Computer Science</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.85rem;padding:0.5rem 0;border-bottom:1px solid var(--soft);">
+              <span style="color:var(--muted);">Year</span><span style="font-weight:500;">4th Year</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.85rem;padding:0.5rem 0;border-bottom:1px solid var(--soft);">
+              <span style="color:var(--muted);">Email</span><span style="font-weight:500;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f0829f989984b0939f9c9c959795de959485">[email&#160;protected]</a></span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.85rem;padding:0.5rem 0;">
+              <span style="color:var(--muted);">Role</span><span style="background:rgba(200,146,42,0.15);color:var(--gold);font-size:0.72rem;padding:0.2rem 0.6rem;border-radius:2rem;font-weight:600;">Lead Developer</span>
+            </div>
+          </div>
+          <button onclick="showToast('Edit profile coming soon! ✏️')" style="width:100%;margin-top:1.2rem;padding:0.6rem;background:var(--soft);border:none;border-radius:0.4rem;font-size:0.85rem;cursor:pointer;font-weight:500;transition:background 0.2s;" onmouseover="this.style.background='#d4cec6'" onmouseout="this.style.background='var(--soft)'">✏️ Edit Profile</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✅ &nbsp;<span id="toastMsg"></span></div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    const navEl = document.getElementById('nav-' + id);
+    if (navEl) navEl.classList.add('active');
+    window.scrollTo(0, 0);
+    return false;
+  }
+  function toggleMobile() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+  function filterEvents(category, btn) {
+    // Update active button
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // Filter cards
+    const cards = document.querySelectorAll('#eventsGrid .event-full-card');
+    let visibleCount = 0;
+    cards.forEach(card => {
+      const cardCategory = card.getAttribute('data-category');
+      const show = category === 'All' || cardCategory === category;
+      card.style.display = show ? 'block' : 'none';
+      if (show) visibleCount++;
+    });
+
+    // Show/hide empty message
+    const msg = document.getElementById('no-events-msg');
+    msg.style.display = visibleCount === 0 ? 'block' : 'none';
+  }
+  function setFilter(btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+    function showToast(msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3200);
+  }
+  function toggleFaq(el) {
+    const ans = el.querySelector('.faq-answer');
+    const arrow = el.querySelector('.faq-arrow');
+    const isOpen = ans.style.display === 'block';
+    ans.style.display = isOpen ? 'none' : 'block';
+    arrow.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+  }
+</script>
+</body>
+</html>
